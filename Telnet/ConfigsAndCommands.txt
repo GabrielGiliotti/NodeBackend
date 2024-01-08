@@ -1,0 +1,48 @@
+Installing WSL on Windows 11
+
+- Open the PowerShell and execute the following command
+
+  wsl --install -d Ubuntu
+
+  reference link: https://learn.microsoft.com/pt-br/windows/wsl/install
+
+Using WSL on Windows 11
+
+- After the installation, open the "Start" menu on the taskbar and search for "Ubuntu"
+- Open the "Ubuntu" app as admin
+
+- Execute the following command on Ubuntu shell:
+
+  cd ../../mnt/c/Users/gabri/Desktop
+
+  (this command put your current diretory on WSL in the Desktop directory from Windows, but is not a mandatory command)
+
+
+Using the Telnet in WSL with localy hosted API on Windows  
+
+- Run your API in your local machine (localhost:port) - It is different for each technology used
+- Open the Command prompt on Windows as Admin and execute the following command:
+
+  ipconfig /all
+
+- Search for "Ethernet vEthernet (WSL)"
+- Get the Ipv4 address and copy
+- Execute the following command on WSL prompt:
+
+  telnet <Ipv4-address> <api-port>
+
+- Then, for a simple GET request, define the method, headers and content as follow:
+
+GET <api-path> HTTP/1.1
+Host: localhost:<port>
+
+- If is a POST request, similary do:
+
+POST <api-path> HTTP/1.1
+Host: localhost:<port>
+Content-type: application/json
+Content-length: <body-length>
+
+<body as json>
+
+
