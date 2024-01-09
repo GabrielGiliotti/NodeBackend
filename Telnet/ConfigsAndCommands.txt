@@ -53,7 +53,7 @@ Node API HTTPS Configuration
 
   openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt
 
-- Then, import https lib in the server controll file and update the server using the https protocol:
+- Then, import https lib in the server control file and update the server using the https protocol:
 
 Node Example (the implementation is different for another technology - search for documentations):
 
@@ -66,4 +66,14 @@ https.createServer({
    console.log("API disponível em https://localhost:8000")
 });
 
+- To read the content of the certificate file, you can run "cat server.crt", but all the data is croptographed, run 
+  the following command to see the content (OBS: run the commands in WSL):
 
+  openssl x509 -in server.crt -text
+
+- To read the content of key file run the following command:
+
+  openssl rsa -in server.key -text -noout
+
+* When a request is made, before the client send your data, the server send the certified to the client, which in 
+  turn validates whether the server is really "who" it says it is
