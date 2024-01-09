@@ -45,4 +45,25 @@ Content-length: <body-length>
 
 <body as json>
 
+######################################################################################
+
+Node API HTTPS Configuration
+
+- To create the key and certificate for https with openssl, open your command prompt in API directory and run:
+
+  openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt
+
+- Then, import https lib in the server controll file and update the server using the https protocol:
+
+Node Example (the implementation is different for another technology - search for documentations):
+
+const https = require("https"); // import
+
+https.createServer({
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.crt')
+}, server).listen(8000, () => {
+   console.log("API disponível em https://localhost:8000")
+});
+
 
