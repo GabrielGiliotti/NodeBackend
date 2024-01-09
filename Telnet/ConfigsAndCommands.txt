@@ -75,5 +75,6 @@ https.createServer({
 
   openssl rsa -in server.key -text -noout
 
-* When a request is made, before the client send your data, the server send the certified to the client, which in 
-  turn validates whether the server is really "who" it says it is
+* When a request is made, before the client send your data, the server send the certified to the client that 
+  contains the public key, which in turn validates whether the server is really "who" it says it is and encrypt 
+  your data before send
