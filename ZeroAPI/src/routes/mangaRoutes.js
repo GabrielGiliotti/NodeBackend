@@ -1,12 +1,12 @@
 import express from "express";
 import MangaController from "../controllers/mangaController.js";
 
-const routes = express.Router();
+const mangaRoutes = express.Router();
 
-routes.get("/mangas", MangaController.getMangas);
-routes.get("/mangas/:id", MangaController.getMangaById);
-routes.post("/mangas", MangaController.postManga);
-routes.put("/mangas/:id", MangaController.updateManga);
-routes.delete("/mangas/:id", MangaController.deleteManga);
+mangaRoutes.get("/mangas", MangaController.getMangas);
+mangaRoutes.get("/mangas/:id", MangaController.getMangaById);
+mangaRoutes.post("/mangas", MangaController.postManga);
+mangaRoutes.put("/mangas/:id", MangaController.updateManga);
+mangaRoutes.delete("/mangas/:id", MangaController.deleteManga);
 
-export default routes;
+export default mangaRoutes;
