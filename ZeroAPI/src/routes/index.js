@@ -6,9 +6,7 @@ import authorRoutes from "./authorRoutes.js";
 const routes = (app) => {
     app.route("/").get((_, res) => res.status(200).send("Node.js course"));
     
-    app.use(express.json(), mangaRoutes);
-    app.use(express.json(), authorRoutes);
-
+    app.use(express.json(), mangaRoutes, authorRoutes);
 };
 
 export default routes;

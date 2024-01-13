@@ -1,4 +1,4 @@
-import { authors, authorSchema }from "../models/author.js";
+import { authors }from "../models/author.js";
 
 class AuthorController {
 
