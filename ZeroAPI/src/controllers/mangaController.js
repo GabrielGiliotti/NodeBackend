@@ -1,5 +1,6 @@
 import mangas from "../models/manga.js";
 import { authors } from "../models/author.js";
+import mongoose from "mongoose";
 
 class MangaController {
 
@@ -16,9 +17,16 @@ class MangaController {
     try {
       const id = req.params.id;
       const manga = await mangas.findById(id);
-      res.status(200).json(manga);
+      if(manga !== null) 
+        res.status(200).json(manga);
+      else 
+        res.status(404).json({message: "Manga not found"});
+      
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to get the specified manga`});
+      if(error instanceof mongoose.Error.CastError)
+        res.status(400).json({ message: `${error.message} - The hexadecimal Id value is not valid`});
+      else
+        res.status(500).json({ message: `${error.message} - Failed to get the specified manga`});
     }   
   }
 

@@ -1,4 +1,5 @@
 import { authors }from "../models/author.js";
+import mongoose from "mongoose";
 
 class AuthorController {
 
@@ -15,9 +16,15 @@ class AuthorController {
     try {
       const id = req.params.id;
       const author = await authors.findById(id);
-      res.status(200).json(author);
+      if(author !== null)
+        res.status(200).json(author);
+      else
+        res.status(404).json({message: "Author not found"});
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to get the specified author`});
+      if(error instanceof mongoose.Error.CastError)
+        res.status(400).json({ message: `${error.message} - The hexadecimal Id value is not valid`});
+      else
+        res.status(500).json({ message: `${error.message} - Failed to get the specified author`});
     }   
   }
 
