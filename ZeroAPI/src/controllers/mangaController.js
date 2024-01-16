@@ -1,5 +1,4 @@
-import mangas from "../models/manga.js";
-import { authors } from "../models/author.js";
+import { mangas, authors } from "../models/index.js";
 import NotFoundError from "../errors/notFoundError.js";
 
 class MangaController {
