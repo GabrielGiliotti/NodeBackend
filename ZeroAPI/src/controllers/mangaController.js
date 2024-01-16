@@ -1,36 +1,32 @@
 import mangas from "../models/manga.js";
 import { authors } from "../models/author.js";
-import mongoose from "mongoose";
+import NotFoundError from "../errors/notFoundError.js";
 
 class MangaController {
 
-  static async getMangas (_, res) {
+  static async getMangas (_, res, next) {
     try {
       const mangaList = await mangas.find({});
       res.status(200).json(mangaList);
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to get mangas`});
+      next(error);
     }   
   }
 
-  static async getMangaById (req, res) {
+  static async getMangaById (req, res, next) {
     try {
       const id = req.params.id;
       const manga = await mangas.findById(id);
       if(manga !== null) 
         res.status(200).json(manga);
       else 
-        res.status(404).json({message: "Manga not found"});
-      
+        next(new NotFoundError("Manga Id not found"));
     } catch (error) {
-      if(error instanceof mongoose.Error.CastError)
-        res.status(400).json({ message: `${error.message} - The hexadecimal Id value is not valid`});
-      else
-        res.status(500).json({ message: `${error.message} - Failed to get the specified manga`});
+      next(error);
     }   
   }
 
-  static async postManga (req, res) {
+  static async postManga (req, res, next) {
     const newManga = req.body;
     try {
       const author = await authors.findById(newManga.author);
@@ -38,38 +34,50 @@ class MangaController {
       const createdManga = await mangas.create(completeManga);
       res.status(201).json({ message:"The new manga was regisrered succesfully" , manga: createdManga });
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to register new manga`});
+      next(error);
     }
   }
 
-  static async updateManga (req, res) {
+  static async updateManga (req, res, next) {
     const mangaId = req.params.id;
     try {
       const author = await authors.findById(req.body.author);
-      await mangas.findByIdAndUpdate(mangaId, { ...req.body , author: author });
-      res.status(200).json({ message: "Updated manga" });
+      const result = await mangas.findByIdAndUpdate(mangaId, { ...req.body , author: author });
+      if(result !== null)
+        res.status(200).json({ message: "Updated manga" });
+      else 
+        next(new NotFoundError("Manga Id not found"));
+
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to update the specified manga`});
+      next(error);
     }   
   }
 
-  static async deleteManga (req, res) {
+  static async deleteManga (req, res, next) {
     try {
       const id = req.params.id;
-      await mangas.findByIdAndDelete(id);
-      res.status(200).json({ message: "Deleted manga" });
+      const result = await mangas.findByIdAndDelete(id);
+      if(result !== null)
+        res.status(200).json({ message: "Deleted manga" });
+      else
+        next(new NotFoundError("Manga Id not found"));
+
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to delete the specified manga`});
+      next(error);
     }   
   }
 
-  static async getMangaByAuthor (req, res) {
+  static async getMangaByAuthor (req, res, next) {
     const author = req.query.name;
     try {
       const mangaByAuthor = await mangas.find({"author.name": author});
-      res.status(200).json(mangaByAuthor);
+      if(mangaByAuthor.length > 0)
+        res.status(200).json(mangaByAuthor);
+      else
+        next(new NotFoundError("Author name not found"));
+
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to get manga by author`});
+      next(error);
     }
   }
 }

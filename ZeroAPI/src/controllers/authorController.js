@@ -1,59 +1,65 @@
+import NotFoundError from "../errors/notFoundError.js";
 import { authors }from "../models/author.js";
-import mongoose from "mongoose";
 
 class AuthorController {
 
-  static async getAuthors (_, res) {
+  static async getAuthors (_, res, next) {
     try {
       const authorList = await authors.find({});
       res.status(200).json(authorList);
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to get authors`});
+      next(error);
     }   
   }
 
-  static async getAuthorById (req, res) {
+  static async getAuthorById (req, res, next) {
     try {
       const id = req.params.id;
       const author = await authors.findById(id);
       if(author !== null)
         res.status(200).json(author);
       else
-        res.status(404).json({message: "Author not found"});
-    } catch (error) {
-      if(error instanceof mongoose.Error.CastError)
-        res.status(400).json({ message: `${error.message} - The hexadecimal Id value is not valid`});
-      else
-        res.status(500).json({ message: `${error.message} - Failed to get the specified author`});
+        next(new NotFoundError("Author Id not found"));
+    } 
+    catch (error) {
+      next(error);
     }   
   }
 
-  static async postAuthor (req, res) {
+  static async postAuthor (req, res, next) {
     try {
       const newAuthor = await authors.create(req.body);
       res.status(201).json({ message:"The new author was regisrered succesfully" , author: newAuthor });
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to register new author`});
+      next(error);
     }
   }
 
-  static async updateAuthor (req, res) {
+  static async updateAuthor (req, res, next) {
     try {
       const id = req.params.id;
-      await authors.findByIdAndUpdate(id, req.body);
-      res.status(200).json({ message: "Updated author" });
+      const result = await authors.findByIdAndUpdate(id, req.body);
+      if(result !== null)
+        res.status(200).json({ message: "Updated author" });
+      else
+        next(new NotFoundError("Author Id not found"));
+
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to update the specified author`});
+      next(error);
     }   
   }
 
-  static async deleteAuthor (req, res) {
+  static async deleteAuthor (req, res, next) {
     try {
       const id = req.params.id;
-      await authors.findByIdAndDelete(id);
-      res.status(200).json({ message: "Deleted author" });
+      const result = await authors.findByIdAndDelete(id);
+      if(result !== null)
+        res.status(200).json({ message: "Deleted author" });
+      else 
+        next(new NotFoundError("Author Id not found"));
+
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Failed to delete the specified author`});
+      next(error);
     }   
   }
 }
