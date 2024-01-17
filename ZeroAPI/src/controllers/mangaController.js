@@ -66,14 +66,24 @@ class MangaController {
     }   
   }
 
-  static async getMangaByAuthor (req, res, next) {
-    const author = req.query.name;
+  static async getMangaByFilter (req, res, next) {
     try {
-      const mangaByAuthor = await mangas.find({"author.name": author});
-      if(mangaByAuthor.length > 0)
-        res.status(200).json(mangaByAuthor);
+      const { title, publishingCompany, name, pageMin, pageMax } = req.query;
+
+      const search = {};
+
+      if(title) search.title = { $regex: title, $options: "i" };
+      if(publishingCompany) search.publishing_company = { $regex: publishingCompany, $options: "i" };
+      if(name) search["author.name"] = { $regex: name, $options: "i" };
+      if(pageMin) search.page_number = { $gte: pageMin };
+      if(pageMax) search.page_number = { $lte: pageMax };
+    
+      const mangaByFilter = await mangas.find(search);
+
+      if(mangaByFilter.length > 0)
+        res.status(200).json(mangaByFilter);
       else
-        next(new NotFoundError("Author name not found"));
+        next(new NotFoundError("Applyed filter not found"));
 
     } catch (error) {
       next(error);
