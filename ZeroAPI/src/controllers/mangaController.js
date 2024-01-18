@@ -3,10 +3,11 @@ import NotFoundError from "../errors/notFoundError.js";
 
 class MangaController {
 
-  static async getMangas (_, res, next) {
+  static async getMangas (req, res, next) {
     try {
-      const mangaList = await mangas.find({});
-      res.status(200).json(mangaList);
+      const search = mangas.find();
+      req.result = search;
+      next();
     } catch (error) {
       next(error);
     }   
@@ -78,13 +79,11 @@ class MangaController {
       if(pageMin) search.page_number = { $gte: pageMin };
       if(pageMax) search.page_number = { $lte: pageMax };
     
-      const mangaByFilter = await mangas.find(search);
+      const mangaByFilter = mangas.find(search);
 
-      if(mangaByFilter.length > 0)
-        res.status(200).json(mangaByFilter);
-      else
-        next(new NotFoundError("Applyed filter not found"));
+      req.result = mangaByFilter;
 
+      next();
     } catch (error) {
       next(error);
     }
