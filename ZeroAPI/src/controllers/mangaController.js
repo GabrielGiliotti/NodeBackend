@@ -67,7 +67,7 @@ class MangaController {
     }   
   }
 
-  static async getMangaByFilter (req, res, next) {
+  static async getMangaByFilter (req, _, next) {
     try {
       const { title, publishingCompany, name, pageMin, pageMax } = req.query;
 
